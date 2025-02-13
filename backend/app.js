@@ -3,7 +3,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require("./Routes/userRoutes");
-
+const cors = require('cors');
 
 
 //express() function initializes an Express application that can handle requests and responses.
@@ -19,6 +19,8 @@ const app = express();
 
 //postman eken input krn data, json ekt responsive wen widiht hdnw
 app.use(express.json());//mek udin oni
+
+app.use(cors());
 
 //app.use() method applies middleware for all HTTP methods (GET, POST, PUT, DELETE, etc.).
 app.use("/users", router);
