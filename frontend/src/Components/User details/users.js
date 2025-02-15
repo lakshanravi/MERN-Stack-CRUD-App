@@ -1,60 +1,116 @@
-// useState: Manages the state (stores user data).
-// useEffect: Runs code when the component is loaded (fetches data).
-// axios: Makes HTTP requests to fetch user data.
-// Nav: Imports a navigation bar.
+//
 
-import React, { useState, useEffect } from 'react';
-import Nav from '../Nav/Nav';
-import axios from 'axios'; 
-import User from '../User/User';
+import React, { useState, useEffect, useRef } from "react";
+import Nav from "../Nav/Nav";
+import axios from "axios";
+import User from "../User/User";
 
+// pdf handling
+import { useReactToPrint } from "react-to-print";
 
+const URL = "http://localhost:5000/users";
 
-//user data display krnn oni arn backend eken arn. url ek import krgnn
-
-const URL = 'http://localhost:5000/users';
-
-//dan data tika aragamu
-
-//Axios is a JavaScript library used to make HTTP requests. It is commonly used in React and Node.js to interact with APIs.
-
-// URL: Stores the backend API endpoint where user data is fetched from.
-// fetchHandler(): A function that makes an API call using axios.get() and returns the data.
+// Axios fetch handler
 const fetchHandler = async () => {
   return await axios.get(URL).then((res) => res.data);
 };
 
-function users() {
+function Users() {
+  const [users, setUsers] = useState();
 
-  // retuen ekt klin me code tika ghnn
-  //set krgmu userslwa
+  useEffect(() => {
+    fetchHandler().then((data) => {
+      setUsers(data.users);
+      console.log(data.users); // Debug: check the data
+    });
+  }, []);
 
-//   useState(): Creates a state variable users to store fetched data.
-// useEffect(): Calls fetchHandler() only once when the component loads ([] dependency array).
-// setUsers(data): Updates the users state with the fetched data.
-  const [users,setUsers] =useState();
-  useEffect(() => { 
-    fetchHandler().then((data) => 
-      setUsers(data.users));
-    },[]);
-  
+  // Create ref for the content to be printed
+  const contentRef = useRef();
+
+  // Handle print functionality
+  const handlePrint = useReactToPrint({
+    content: () => contentRef.current, // Pass the reference to the printable content
+    DocumentTitle: "User Details",
+    onafterprint: () => alert("Printed successfully!"),
+  });
+
+  //search functionality
+  const [searchQuery, setSearchQuery] = useState("");
+  const [noResults, setNoResults] = useState(false);
+  const handleSearch = () => {
+    fetchHandler().then((data) => {
+      const filteredUsers = data.users.filter((user) =>
+        Object.values(user).some((field) =>
+          field.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+      setUsers(filteredUsers);
+      setNoResults(filteredUsers.length === 0);
+    });
+
+    //search krnn puluwn wenn search bar ekk em hdnnn dan
+  };
+
+  //whatsapp msg sensd kirima
+  //send krn details wlt adala function ek'
+  const handleSendReport = () => {
+    //create the whatsapp chat url
+    const phoneNumber = "+94711031449";
+    const message = `selected User Reports`
+    const whatsAppUrl = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+
+    //open whtsapp caht in new window
+    window.open(whatsAppUrl,"_blank");
+  }
 
   return (
     <div>
-      <Nav/>
-      <h1>User details display page</h1>
+      <Nav />
       <div>
-        {/* DB eke tyne data tika display krnNA KYL TYNNE USER KYN FILE EKE.. User/User.js ek import krl tynne . ek tm methna display wenne */}
-        {users && users.map((user,i) => (
-          <div key={i}>
-            <User user={user} />  
-
+        <h1>User details display page</h1>
+        <input
+          type="text"
+          name="search"
+          placeholder="Search..."
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
+        {/* dan user detail search ekt addalw filter wenn hadima */}
+        {noResults ? (
+          <div>
+            <p>no users found</p>
+          </div>
+        ) : (
+          <div>
+            {/* Ensure users are rendered properly */}
+            {users && users.length > 0 ? (
+              users.map((user, i) => (
+                <div key={i}>
+                  <User user={user} />
+                </div>
+              ))
+            ) : (
+              <p>No users available.</p> // Message if no users to show
+            )}
+          </div>
+        )}
       </div>
-      ))}
-    </div>
-    </div>
 
-  )
+      {/* print krn ek weda nh. pdf hdn ek */}
+      <div ref={contentRef}>
+        <h1>Hi me yy</h1>
+        <h2>Hi me yy</h2>
+      </div>
+
+      <button onClick={handlePrint}>Download Report</button>
+
+      <br />
+      <br />
+      <button onClick={handleSendReport}>Send whatsapp Message</button>
+    </div>
+  );
 }
 
-export default users
+export default Users;

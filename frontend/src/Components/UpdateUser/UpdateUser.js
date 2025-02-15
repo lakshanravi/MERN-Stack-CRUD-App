@@ -91,45 +91,33 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 function UpdateUser() {
-  const { id } = useParams(); // Fix useParams
-  const history = useNavigate();
-  const [inputs, setInputs] = useState({});
+  const { id } = useParams(); // Extract user ID from URL
+  const navigate = useNavigate(); // Handles navigation after update
 
-  // Fetch user details
-  const fetchHandler = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/users/${id}`);
-      setInputs(res.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  const [inputs, setInputs] = useState({
+    name: "",
+    age: "",
+    gmail: "",
+    address: "",
+  });
 
+  // Fetch user details when component loads
   useEffect(() => {
+    const fetchHandler = async () => {
+      if (!id) return; // Ensure id exists
+      console.log("Fetching user with ID:", id); // Debugging
+
+      try {
+        const res = await axios.get(`http://localhost:5000/users/${id}`);
+        console.log("Fetched Data:", res.data); // Debugging
+        setInputs(res.data); // Populate form fields
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
     fetchHandler();
   }, [id]);
-
-  // Update user
-  const sendRequest = async () => {
-    try {
-      const res = await axios.put(`http://localhost:5000/users/${id}`, {
-        name: String(inputs.name),
-        age: parseInt(inputs.age, 10),
-        gmail: String(inputs.gmail),
-        address: String(inputs.address),
-      });
-      return res.data;
-    } catch (error) {
-      console.error("Error updating user:", error);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(inputs);
-    await sendRequest();
-    history("/userdetails");
-  };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -139,31 +127,77 @@ function UpdateUser() {
     }));
   };
 
+  // Update user
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitting Data:", inputs); // Debugging
+
+    try {
+      const res = await axios.put(`http://localhost:5000/users/${id}`, {
+        name: String(inputs.name),
+        age: parseInt(inputs.age, 10),
+        gmail: String(inputs.gmail),
+        address: String(inputs.address),
+      });
+
+      console.log("Update Response:", res.data); // Debugging
+      alert("User updated successfully!");
+      navigate("/userdetails"); // Navigate after update
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Failed to update user. Please try again.");
+    }
+  };
+
   return (
     <div>
       <h2>Update User</h2>
       <form onSubmit={handleSubmit}>
         <label>Name</label>
         <br />
-        <input type="text" name="name" onChange={handleChange} value={inputs.name || ""} required />
+        <input
+          type="text"
+          name="name"
+          onChange={handleChange}
+          value={inputs.name || ""} // Ensure input is controlled
+          required
+        />
         <br />
         <br />
         <label>Age</label>
         <br />
-        <input type="number" name="age" onChange={handleChange} value={inputs.age || ""} required />
+        <input
+          type="number"
+          name="age"
+          onChange={handleChange}
+          value={inputs.age || ""} // Ensure input is controlled
+          required
+        />
         <br />
         <br />
-        <label>Gmail</label>
+        <label>Email</label>
         <br />
-        <input type="email" name="gmail" onChange={handleChange} value={inputs.gmail || ""} required />
+        <input
+          type="email"
+          name="gmail"
+          onChange={handleChange}
+          value={inputs.gmail || ""} // Ensure input is controlled
+          required
+        />
         <br />
         <br />
         <label>Address</label>
         <br />
-        <input type="text" name="address" onChange={handleChange} value={inputs.address || ""} required />
+        <input
+          type="text"
+          name="address"
+          onChange={handleChange}
+          value={inputs.address || ""} // Ensure input is controlled
+          required
+        />
         <br />
         <br />
-        <button type="submit">Submit</button>
+        <button type="submit">Update</button>
       </form>
     </div>
   );

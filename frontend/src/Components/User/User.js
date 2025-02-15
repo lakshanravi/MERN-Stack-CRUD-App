@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // me page eketh udin nav bar ek display krnn ononline. e hina tm import krgnne
 
@@ -8,6 +9,23 @@ import { Link } from 'react-router-dom';
 function User(props) {
 
   //display krrn  oni data tika mulin import krgnn. bakcend eke widiht
+const navigate = useNavigate();
+const deleteHandler = async () => {
+  if (!_id) {
+    console.error("Error: _id is undefined");
+    alert("User ID is missing!");
+    return;
+  }
+
+  try {
+    await axios.delete(`http://localhost:5000/users/${_id}`);
+    alert("User deleted successfully!");
+    navigate("/userdetails"); 
+  } catch (error) {
+    console.error("Error deleting user:", error.response?.data || error.message);
+    alert("Error deleting user: " + (error.response?.data?.message || "Unknown error"));
+  }
+};
 
   const{_id,name,gmail,age,address} = props.user ;
   return (
@@ -25,7 +43,7 @@ function User(props) {
       
       <Link to={`/userdetails/${_id}`}>Update</Link>
      
-      <button>delete</button>
+      <button onClick={deleteHandler}>delete</button>
 
     </div>
   )

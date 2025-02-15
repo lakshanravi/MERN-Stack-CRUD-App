@@ -11,6 +11,8 @@ import UserDetails from './Components/User details/users';
 import AddUser from './Components/AddUser/AddUser';
 //function ekk athule tm ui ek hdnne
 import UpdateUser from './Components/UpdateUser/UpdateUser';
+import Register from './Components/Register/Register';
+import Login from './Components/Login/Login'; 
 
 function App() {
   return (
@@ -29,6 +31,12 @@ function App() {
 
         {/* yata ek update user page ekt ynne. yddi id ekth arn ynne automa. specific user update krnna oni */}
         <Route path="/userdetails/:id" element={<UpdateUser />} />
+
+        <Route path="/register" element={<Register />} />
+
+        <Route path="/register" element={<Register />} />
+
+        <Route path="/login" element={<Login />} />
 
       </Routes>
       </React.Fragment>
