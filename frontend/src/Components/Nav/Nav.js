@@ -27,6 +27,18 @@ function Nav() {
             <h1>user details</h1>
           </Link>
         </li>
+        <li className="home-">
+          <Link to="/contactus" className="active home-a">
+            {" "}
+            <h1>Contact Us</h1>
+          </Link>
+        </li>
+        <li className="home-">
+          <Link to="/sendpdf" className="active home-a">
+            {" "}
+            <h1>Send PDF</h1>
+          </Link>
+        </li>
 
         <li className="home-">
           <Link to="/register" className="active home-a">
@@ -41,6 +53,8 @@ function Nav() {
             <button>Login</button>
           </Link>
         </li>
+
+        
        
       </ul>
     </div>

@@ -10,7 +10,7 @@ const User = require('../Model/UserModel');
 const UserControllers = require('../Controllers/UserControllers');
 const Regi = require('../Model/Register');
 const RegisterControllers = require('../Controllers/RegisterController');
-const LoginController =require('../Controllers\LoginController');
+const LoginController = require('../Controllers/LoginController');
 //dan route path ek create krgnn. function ek call krgnn mokkd wenn oni kyl dala klin hduwa
 router.get("/", UserControllers.getAllUser);
 router.post("/", UserControllers.addUsers);
